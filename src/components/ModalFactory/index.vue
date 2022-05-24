@@ -37,10 +37,15 @@
 
 <script>
 import { reactive } from '@vue/reactivity'
+import { onBeforeUnmount, onMounted } from '@vue/runtime-core'
+import useModal from '../../hooks/useModal'
 
 const DEFAULT_WIDTH = 'w-3/4 lg:w-1/3'
 export default {
   setup() {
+    //  importando uso da api do modal
+    const modal = useModal()
+
     // Declarando componente reativo
     const state = reactive({
       isActive: false,
@@ -49,11 +54,25 @@ export default {
       width: DEFAULT_WIDTH,
     })
 
-    function handleModalToogle({ status }) {}
+    // Montagem do modal
+    onMounted(() => {
+      modal.listen(handleModalToogle)
+    })
+
+    // Fechando o modal
+    onBeforeUnmount(() => {
+      modal.off(handleModalToogle)
+    })
+
+    function handleModalToogle(payload) {
+      // Montando
+      if (payload.status) {
+        state.component = payload.component
+      }
+    }
 
     return {
       state,
-      handleModalToogle,
     }
   },
 }

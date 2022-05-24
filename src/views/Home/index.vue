@@ -13,6 +13,7 @@ import CustomHeader from '../Home/CustomHeader.vue'
 import Contact from '../Home/Contact.vue'
 import { useRouter } from 'vue-router'
 import { onMounted } from 'vue'
+import useModal from '../../hooks/useModal'
 
 export default {
   // componentes usados no negocio
@@ -23,6 +24,7 @@ export default {
   setup() {
     // para usar o router, semelhante ao react
     const router = useRouter()
+    const modal = useModal()
 
     // quando o componente é montado
     onMounted(() => {
@@ -34,7 +36,11 @@ export default {
       }
     })
 
-    function handleLogin() {}
+    function handleLogin() {
+      modal.open({
+        component: 'ModalLogin',
+      })
+    }
 
     function handleAccountCreate() {}
 
