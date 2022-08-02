@@ -8,7 +8,7 @@
   </div>
 
   <div class="mt-16">
-    <form @submit="handleSubmit">
+    <form @submit.prevent="handleSubmit">
       <label for="" class="block">
         <span class="text-lg font-medium text-gray-800">E-mail</span>
         <!-- A borda fica vermelha quando o erro existir  -->
@@ -97,14 +97,19 @@
 import { reactive } from '@vue/reactivity'
 import useModal from '../../hooks/useModal'
 import { useField } from 'vee-validate'
+import { useToast } from 'vue-toastification'
 import {
   validateEmptyAndLength3,
   validateEmptyAndEmail,
 } from '../../utils/validators'
+import services from '../../services'
+import { useRouter } from 'vue-router'
 
 export default {
   setup() {
     const modal = useModal()
+    const router = useRouter()
+    const toast = useToast()
 
     const { value: emailValue, errorMessage: emailErrorMessage } = useField(
       'email',
@@ -127,7 +132,44 @@ export default {
       },
     })
 
-    function handleSubmit() {}
+    async function handleSubmit() {
+      toast.clear()
+
+      try {
+        state.isLoading = true
+
+        const { data, errors } = await services.auth.login({
+          email: state.email.value,
+          password: state.password.value,
+        })
+
+        if (!errors) {
+          window.localStorage.setItem('token', data.token)
+          router.push({ name: 'Feedbacks' })
+          state.isLoading = false
+          modal.close()
+          return
+        }
+
+        if (errors.status === 404) {
+          toast.error('E-mail não encontrado')
+        }
+
+        if (errors.status === 401) {
+          toast.error('E-mail/senha inválidos')
+        }
+
+        if (errors.status === 400) {
+          toast.error('Ocorreu um erro ao fazer o login')
+        }
+
+        state.isLoading = false
+      } catch (error) {
+        state.isLoading = false
+        state.hasErrors = !!error
+        toast.error('Ocorreu um erro ao fazer o login')
+      }
+    }
 
     return {
       state,
