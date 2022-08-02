@@ -79,6 +79,7 @@
 
 <script>
 export default {
+  // Props e event emitter do componente
   setup(_, { emit }) {
     return { emit }
   },

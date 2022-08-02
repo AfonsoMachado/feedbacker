@@ -22,7 +22,7 @@ export default {
     Contact,
   },
   setup() {
-    // para usar o router, semelhante ao react
+    // para usar o router, cria um hook semelhante ao react
     const router = useRouter()
     const modal = useModal()
 
@@ -42,7 +42,11 @@ export default {
       })
     }
 
-    function handleAccountCreate() {}
+    function handleAccountCreate() {
+      modal.open({
+        component: 'ModalCreateAccount',
+      })
+    }
 
     return {
       handleLogin,
