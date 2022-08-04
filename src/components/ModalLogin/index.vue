@@ -87,7 +87,8 @@
           duration-150
         "
       >
-        Entrar
+        <icon v-if="state.isLoading" name="loading" class="animate-spin" />
+        <span v-else> Entrar </span>
       </button>
     </form>
   </div>
@@ -98,6 +99,7 @@ import { reactive } from '@vue/reactivity'
 import useModal from '../../hooks/useModal'
 import { useField } from 'vee-validate'
 import { useToast } from 'vue-toastification'
+import Icon from '../Icon'
 import {
   validateEmptyAndLength3,
   validateEmptyAndEmail,
@@ -106,6 +108,9 @@ import services from '../../services'
 import { useRouter } from 'vue-router'
 
 export default {
+  components: {
+    Icon,
+  },
   setup() {
     const modal = useModal()
     const router = useRouter()
